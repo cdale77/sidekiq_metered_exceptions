@@ -8,7 +8,7 @@ module SidekiqMeteredExceptions
         # report a predictable error class on the first failure, or if a user
         # triggers a retry via the gui.
         if job['retry_count'] == nil || job['retry_count'] < 0
-          raise SidekiqMeteredExceptions::MeteredError
+          raise SidekiqMeteredExceptions::MeteredError.new(ex.inspect)
         else
           raise(ex)
         end
