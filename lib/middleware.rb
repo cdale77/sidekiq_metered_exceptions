@@ -5,8 +5,13 @@ module SidekiqMeteredExceptions
       begin
         yield
       rescue Exception => ex
-        # do not notify on the first occurrence of an exception
-        raise(ex) if job['retry_count'] == nil || job['retry_count'] > 0
+        # report a predictable error class on the first failure, or if a user
+        # triggers a retry via the gui.
+        if job['retry_count'] == nil || job['retry_count'] < 0
+          raise SidekiqMeteredExceptions::MeteredError
+        else
+          raise(ex)
+        end
       end
     end
   end
